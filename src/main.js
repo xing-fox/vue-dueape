@@ -1,8 +1,10 @@
 import Vue from 'vue'
-import App from './App.vue'
-
-Vue.config.productionTip = false
+import App from './App'
+import { router } from './router'
+import 'amfe-flexible'
 
 new Vue({
-  render: h => h(App),
-}).$mount('#app')
+  router,
+  el: '#app',
+  render: h => h(App)
+})
