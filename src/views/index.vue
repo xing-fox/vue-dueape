@@ -1,8 +1,8 @@
-
 <style lang="less">
 .home {
 }
 </style>
+
 <template>
   <div class="home">
     <router-view />

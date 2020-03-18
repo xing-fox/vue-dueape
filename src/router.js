@@ -9,6 +9,13 @@ const routes = [
     redirect: '/home/curriculum'
   },
   {
+    path: '/login',
+    component: () => import('./views/login'),
+    meta: {
+      title: 'DueApe'
+    }
+  },
+  {
     name: 'home',
     component: () => import('./views/index'),
     meta: {
@@ -44,7 +51,10 @@ routes.forEach(route => {
   route.path = route.path || '/' + (route.name || '');
 })
 
-const router = new Router({ routes })
+const router = new Router({
+  routes,
+  mode: 'history'
+})
 
 router.beforeEach((to, from, next) => {
   const title = to.meta && to.meta.title;
