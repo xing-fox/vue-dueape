@@ -41,7 +41,7 @@ export default {
           icon: [require('../assets/icon-1.png'),require('../assets/icon-1-on.png')]
         }, {
           title: "我的课程",
-          path: "/home/personal",
+          path: "/home/payment",
           icon: [require('../assets/icon-2.png'),require('../assets/icon-2-on.png')]
         }, {
           title: "账户",

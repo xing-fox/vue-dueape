@@ -1,166 +1,3 @@
-<template>
-  <div class="curriculum">
-    <div class="top-box">
-      <div class="school"><span>加州大学圣地亚哥分校（UCSD）</span></div>
-      <div class="search"></div>
-    </div>
-    <van-tabs v-model="active" animated swipeable :border="false" title-active-color="#DFB575" title-inactive-color="#666666">
-      <van-tab v-for="(item, index) in classList" :key="index" :title="item.navTitle">
-        <!-- 精选 -->
-        <div v-if="index === 0" class="home">
-          <van-swipe class="banner" :autoplay="3000" indicator-color="white">
-            <van-swipe-item>1</van-swipe-item>
-            <van-swipe-item>2</van-swipe-item>
-            <van-swipe-item>3</van-swipe-item>
-            <van-swipe-item>4</van-swipe-item>
-          </van-swipe>
-
-          <div class="advert">
-            <div class="item">
-              <img src="../assets/icon1.png">
-              <div><p>了解DueApe</p>给您VIP式的服务</div>
-            </div>
-            <div class="item">
-              <img src="../assets/icon4.png">
-              <div><p>选课咨询</p>为您量身定制课程</div>
-            </div>
-          </div>
-
-          <div class="class-list">
-            <div class="open-class">
-              <div class="title">公开课</div>
-              <div class="class-box">
-                <div class="code"><span>FIT9133</span></div>
-                <div class="name">5大科目指数独家分析</div>
-                <div class="des">Python编程和算法的基础课程讲解</div>
-                <div class="des">11月22日18:00开课 </div>
-                <div class="info">
-                  <div class="user"><img src="../assets/icon2.png">Tony</div>
-                  <p>免费</p>
-                </div>              
-              </div>
-              <div class="class-box">
-                <div class="code"><span>ECON1203</span></div>
-                <div class="name">考试技巧分享，免费领取独家资料，分享 学习心得，建立知识框架</div>
-                <div class="des">主讲人UNSW在读，均分Distinction</div>
-                <div class="des">查看精彩回放</div>
-                <div class="info">
-                  <div class="user"><img src="../assets/icon2.png">Sunny</div>
-                  <p>199</p>
-                </div>              
-              </div>
-              <div class="open-more"><span>查看更多公开课</span></div>
-            </div>
-            <div class="title">好课推荐</div>
-            <div class="class-box" v-for="(it, inx) in item.listData" :key="'list' + index + inx">
-              <div class="name"><i class="hot" v-if="it.type === 1"></i><i class="offline" v-if="it.type === 2"></i>{{ it.title }}</div>
-              <div class="des">{{ it.time }}</div>
-              <div class="info">
-                <span>{{ it.num }}人报名</span>
-                <p class="price"><span>{{ it.originalPrice }}</span>{{ it.price }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 作业班 期中班 期末班 每周小课堂 -->
-        <div v-else class="class-list">
-          <div class="class-box" v-for="(it, inx) in item.listData" :key="'list' + index + inx">
-            <div class="name"><i class="hot" v-if="it.type === 1"></i><i class="offline" v-if="it.type === 2"></i>{{ it.title }}</div>
-            <div class="des">{{ it.time }}</div>
-            <div class="info">
-              <span>{{ it.num }}人报名</span>
-              <p class="price"><span>{{ it.originalPrice }}</span>{{ it.price }}</p>
-            </div>
-          </div>
-        </div>
-      </van-tab>
-    </van-tabs>
-  </div>
-</template>
-
-<script>
-import { Sticky, Tab, Tabs, Swipe, SwipeItem } from 'vant'
-
-export default {
-  components: {
-    [Sticky.name]: Sticky,
-    [Tab.name]: Tab,
-    [Tabs.name]: Tabs,
-    [Swipe.name]: Swipe,
-    [SwipeItem.name]: SwipeItem
-  },
-
-  data() {
-    return {
-      active: 0,
-      classList: [
-        {
-          navTitle: "精选",
-          listData: [{
-            type: 0,
-            title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
-            time: "10月12日 15:30",
-            num: 21,
-            price: "100",
-            originalPrice: "140"
-          }]
-        }, {
-          navTitle: "作业班",
-          listData: [{
-            type: 1,
-            title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
-            time: "10月12日 15:30",
-            num: 21,
-            price: "100",
-            originalPrice: "140"
-          }, {
-            type: 2,
-            title: "MATH1081- 期末火箭班，教你拿高分的 秘诀",
-            time: "11月5日 13:00",
-            num: 3,
-            price: "100",
-            originalPrice: "140"
-          }]
-        }, {
-          navTitle: "期中班",
-          listData: [{
-            type: 0,
-            title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
-            time: "10月12日 15:30",
-            num: 21,
-            price: "100",
-            originalPrice: "140"
-          }]
-        }, {
-          navTitle: "期末班",
-          listData: [{
-            type: 2,
-            title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
-            time: "10月12日 15:30",
-            num: 21,
-            price: "100",
-            originalPrice: "140"
-          }]
-        }, {
-          navTitle: "每周小课堂",
-          listData: [{
-            type: 1,
-            title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
-            time: "10月12日 15:30",
-            num: 21,
-            price: "100",
-            originalPrice: "140"
-          }]
-        }
-      ]
-    }
-  },
-  methods: {
-  }
-};
-</script>
-
 <style lang="less">
 .curriculum {
   height: 100vh;
@@ -168,16 +5,17 @@ export default {
   flex-direction: column;
   .top-box {
     display: flex;
-    height: 22px;
+    height: 24px;
     line-height: 22px;
     padding: 15px 16px 0;
     background: #222222;
     justify-content: space-between;
     .school {
       flex:1;
-      font-size:15px;
+      font-size:14px;
       color:#999;
       overflow:hidden;
+      padding-bottom: 2px;
       span {
         max-width:86%;
         text-overflow: ellipsis;
@@ -186,14 +24,14 @@ export default {
         display:inline-block;
         background: url("../assets/arr-down.png") right center no-repeat;
         padding-right: 16px;
-        background-size: 14px;
+        background-size: 12px;
       }
     }
     .search {
-      width: 22px;
-      height: 22px;
-      background: url("../assets/search.png") no-repeat;
-      background-size: 100% 100%;
+      width: 24px;
+      height: 24px;
+      background: url("../assets/search.png") center no-repeat;
+      background-size: 20px 20px;
     }
   }
   .van-tabs {
@@ -260,8 +98,9 @@ export default {
         font-weight: bold;
         i {
           display: inline-block;
-          vertical-align: middle;
+          vertical-align: top;
           margin-right: 7px;
+          margin-top: 3px;
         }
         .hot {
           width: 14px;
@@ -367,6 +206,11 @@ export default {
       color: #fff;
       .van-swipe-item {
         background-color: #39a9ed;
+        img {
+          display:block;
+          width: 100%;
+          height: 100%;
+        }
       }
     }
     .advert {
@@ -396,5 +240,255 @@ export default {
       }
     }
   }
+  .school-list {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color:#F7F6F6;
+    overflow: hidden;
+    .banner {
+      width: 100%;
+      height: 130px;
+      position: relative;
+      margin-bottom: 5px;
+      img {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      span {
+        position: absolute;
+        display: block;
+        width: 22px;
+        height: 22px;
+        left: 18px;
+        top: 15px;
+        background: url("../assets/close.png") center no-repeat;
+        background-size: 100%;
+      }
+    }
+    ul {
+      flex: 1;
+      padding: 0 15px;
+      overflow-y: auto;
+      background-color: #fff;
+      li {
+        padding: 10px 0;
+        font-size: 14px;
+        color:#343434;
+        line-height: 22px;
+        border-bottom:#EDEDED solid 1px;
+      }
+    }
+  }
 }
 </style>
+
+<template>
+  <div class="curriculum">
+    <div class="top-box">
+      <div class="school" @click="show = true"><span>{{ schoolName }}</span></div>
+      <div class="search" @click="goSearch"></div>
+    </div>
+    <van-tabs v-model="active" animated swipeable :border="false" title-active-color="#DFB575" title-inactive-color="#666666">
+      <van-tab v-for="(item, index) in classList" :key="index" :title="item.navTitle">
+        <!-- 精选 -->
+        <div v-if="index === 0" class="home">
+          <van-swipe class="banner" :autoplay="3000" :show-indicators="false">
+            <van-swipe-item v-for="(image, index) in images" :key="'banner' + index">
+              <img :src="image" />
+            </van-swipe-item>
+          </van-swipe>
+
+          <div class="advert">
+            <div class="item">
+              <img src="../assets/icon1.png">
+              <div><p>了解DueApe</p>给您VIP式的服务</div>
+            </div>
+            <div class="item">
+              <img src="../assets/icon4.png">
+              <div><p>选课咨询</p>为您量身定制课程</div>
+            </div>
+          </div>
+
+          <div class="class-list">
+            <div class="open-class">
+              <div class="title">公开课</div>
+              <div class="class-box">
+                <div class="code"><span>FIT9133</span></div>
+                <div class="name">5大科目指数独家分析</div>
+                <div class="des">Python编程和算法的基础课程讲解</div>
+                <div class="des">11月22日18:00开课 </div>
+                <div class="info">
+                  <div class="user"><img src="../assets/icon2.png">Tony</div>
+                  <p>免费</p>
+                </div>              
+              </div>
+              <div class="class-box">
+                <div class="code"><span>ECON1203</span></div>
+                <div class="name">考试技巧分享，免费领取独家资料，分享 学习心得，建立知识框架</div>
+                <div class="des">主讲人UNSW在读，均分Distinction</div>
+                <div class="des">查看精彩回放</div>
+                <div class="info">
+                  <div class="user"><img src="../assets/icon2.png">Sunny</div>
+                  <p>199</p>
+                </div>              
+              </div>
+              <div class="open-more"><span>查看更多公开课</span></div>
+            </div>
+            <div class="title">好课推荐</div>
+            <div class="class-box" v-for="(it, inx) in item.listData" :key="'list' + index + inx">
+              <div class="name"><i class="hot" v-if="it.type === 1"></i><i class="offline" v-if="it.type === 2"></i>{{ it.title }}</div>
+              <div class="des">{{ it.time }}</div>
+              <div class="info">
+                <span>{{ it.num }}人报名</span>
+                <p class="price"><span>{{ it.originalPrice }}</span>{{ it.price }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 作业班 期中班 期末班 每周小课堂 -->
+        <div v-else class="class-list">
+          <div class="class-box" v-for="(it, inx) in item.listData" :key="'list' + index + inx">
+            <div class="name"><i class="hot" v-if="it.type === 1"></i><i class="offline" v-if="it.type === 2"></i>{{ it.title }}</div>
+            <div class="des">{{ it.time }}</div>
+            <div class="info">
+              <span>{{ it.num }}人报名</span>
+              <p class="price"><span>{{ it.originalPrice }}</span>{{ it.price }}</p>
+            </div>
+          </div>
+        </div>
+      </van-tab>
+    </van-tabs>
+    <van-popup v-model="show" position="bottom" :style="{ height: '100%' }" :round="true">
+      <div class="school-list">
+        <div class="banner">
+          <span class="close" @click="show = false"></span>
+          <img src="../assets/school-bg.png">
+        </div>
+        <ul>
+          <li v-for="(item, index) in schoolList" :key="'school' + index" @click="selectSchool(item)">
+            {{ item }}
+          </li>
+        </ul>
+      </div>
+    </van-popup>
+  </div>
+</template>
+
+<script>
+import { Tab, Tabs, Swipe, SwipeItem, Popup } from 'vant'
+
+export default {
+  components: {
+    [Tab.name]: Tab,
+    [Tabs.name]: Tabs,
+    [Swipe.name]: Swipe,
+    [SwipeItem.name]: SwipeItem,
+    [Popup.name]: Popup
+  },
+  data() {
+    return {
+      active: 0,
+      show: false,
+      classList: [
+        {
+          navTitle: "精选",
+          listData: [{
+            type: 0,
+            title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
+            time: "10月12日 15:30",
+            num: 21,
+            price: "100",
+            originalPrice: "140"
+          }]
+        }, {
+          navTitle: "作业班",
+          listData: [{
+            type: 1,
+            title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
+            time: "10月12日 15:30",
+            num: 21,
+            price: "100",
+            originalPrice: "140"
+          }, {
+            type: 2,
+            title: "MATH1081- 期末火箭班，教你拿高分的 秘诀",
+            time: "11月5日 13:00",
+            num: 3,
+            price: "100",
+            originalPrice: "140"
+          }]
+        }, {
+          navTitle: "期中班",
+          listData: [{
+            type: 0,
+            title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
+            time: "10月12日 15:30",
+            num: 21,
+            price: "100",
+            originalPrice: "140"
+          }]
+        }, {
+          navTitle: "期末班",
+          listData: [{
+            type: 2,
+            title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
+            time: "10月12日 15:30",
+            num: 21,
+            price: "100",
+            originalPrice: "140"
+          }]
+        }, {
+          navTitle: "每周小课堂",
+          listData: [{
+            type: 1,
+            title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
+            time: "10月12日 15:30",
+            num: 21,
+            price: "100",
+            originalPrice: "140"
+          }]
+        }
+      ],
+      images: [
+        require('../assets/banner/1.jpg'),
+        require('../assets/banner/2.jpg'),
+        require('../assets/banner/3.jpg'),
+        require('../assets/banner/4.jpg')
+      ],
+      schoolName: '加州大学圣地亚哥分校（UCSD）',
+      schoolList: [
+        '宾夕法尼亚州立大学（PSU）',
+        '波士顿大学（BU）',
+        '宾夕法尼亚州立大学（PSU）',
+        '波士顿大学圣塔巴巴拉分校（UCSB）',
+        '宾夕法尼亚州立大学（PSU）',
+        '加州大学圣地亚哥分校（UCSD）',
+        '波士顿大学（BU）',
+        '宾夕法尼亚州立大学（PSU）',
+        '波士顿大学圣塔巴巴拉分校（UCSB）',
+        '宾夕法尼亚州立大学（PSU）',
+        '加州大学圣地亚哥分校（UCSD）',
+        '波士顿大学（BU）',
+        '宾夕法尼亚州立大学（PSU）',
+        '波士顿大学圣塔巴巴拉分校（UCSB）',
+        '宾夕法尼亚州立大学（PSU）',
+        '加州大学圣地亚哥分校（UCSD）'
+      ],
+    }
+  },
+  methods: {
+    selectSchool (name) {
+      this.schoolName = name
+      this.show = false
+    },
+    goSearch () {
+      this.$router.push({
+        path: '/search'
+      })
+    }
+  }
+}
+</script>

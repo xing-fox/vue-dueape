@@ -29,9 +29,9 @@ const routes = [
         title: '课程 - 首页'
       }
     }, {
-      path: 'personal',
-      name: 'personal',
-      component: () => import('./views/personal'),
+      path: 'payment',
+      name: 'payment',
+      component: () => import('./views/payment'),
       meta: {
         title: '我的课程'
       }
@@ -43,6 +43,12 @@ const routes = [
         title: '账户'
       }
     }]
+  }, {
+    name: 'search',
+    component: () => import('./views/search'),
+    meta: {
+      title: '搜索'
+    },
   }
 ]
 
