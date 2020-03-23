@@ -182,7 +182,6 @@ export default {
           confirmButtonText: '好',
           confirmButtonColor: '#CDA34F'
         }).then(() => {
-          // on close
         });
       } else {
         Dialog.confirm({

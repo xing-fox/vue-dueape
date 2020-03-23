@@ -1,29 +1,42 @@
 /* 重置样式 */
+
 * {
   padding: 0;
   margin: 0;
 }
+
 body {
   font-size: 16px;
   background-color: #fff;
   -webkit-font-smoothing: antialiased;
   font-family: "PingFangSC-Regular";
 }
-input,button,select,textarea { 
-  outline: none;vertical-align: middle; /*解决父级底部多余空白*/
-  -webkit-appearance: none; /*去掉webkit默认的表单样式*/
-  font-size: 100%; /* 使得表单元素在 ie 下能继承字体大小 */
-  border:none;
-  background:none;
-  -webkit-tap-highlight-color:transparent;
-  }
 
-input::-webkit-input-placeholder,textarea::-webkit-input-placeholder { 
-  color: #CACACA; 
+input,
+button,
+select,
+textarea {
+  outline: none;
+  vertical-align: middle;
+  /*解决父级底部多余空白*/
+  -webkit-appearance: none;
+  /*去掉webkit默认的表单样式*/
+  font-size: 100%;
+  /* 使得表单元素在 ie 下能继承字体大小 */
+  border: none;
+  background: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: #CACACA;
   font-size: 15px;
 }
 
+
 /* 公共样式 */
+
 .public-button {
   width: 100%;
   height: 50px;
@@ -31,17 +44,21 @@ input::-webkit-input-placeholder,textarea::-webkit-input-placeholder {
   line-height: 50px;
   color: #61381F;
   text-align: center;
-  background: linear-gradient(-90deg,#EAD0AE 0%,#E8BB7B 100%);
+  background: linear-gradient(-90deg, #EAD0AE 0%, #E8BB7B 100%);
   border-radius: 4px;
 }
 
+
 /* 重置vant样式表 */
+
 .van-overlay {
-  background-color: rgba(0,0,0,.3) !important;
+  background-color: rgba(0, 0, 0, .3) !important;
 }
+
 .van-dialog {
   border-radius: 10px !important;
 }
+
 .van-popup--bottom.van-popup--round {
   border-radius: 10px 10px 0 0 !important;
 }

@@ -64,6 +64,7 @@
 
 <script>
 import { Popup } from 'vant'
+import { mapMutations } from 'vuex'
 import { collegeIndex } from '@/axios/api'
 export default {
   name: "Login",
@@ -102,6 +103,12 @@ export default {
   },
   methods: {
     /**
+     * 登录
+     */
+    ...mapMutations([
+      'CHANGELOGIN'
+    ]),
+    /**
      * 选择区号
      */
     ChoiseArea (eq) {
@@ -110,7 +117,7 @@ export default {
     /**
      * 选择学校
      */
-    // ChoiseSchool (eq) {}
+    // ChoiseSchool (eq) {},
   },
   mounted () {
     collegeIndex({}).then(res => {
@@ -126,7 +133,10 @@ export default {
   width: 100vw;
   min-height: 100vh;
   background: #fcfcfc;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
   .header {
     width: 100%;
   }

@@ -42,6 +42,13 @@ const routes = [
       meta: {
         title: '账户'
       }
+    }, {
+      path: 'center',
+      name: 'center',
+      component: () => import('./views/center'),
+      meta: {
+        title: '账户'
+      }
     }]
   }, {
     name: 'search',
@@ -52,7 +59,6 @@ const routes = [
   }
 ]
 
-// add route path
 routes.forEach(route => {
   route.path = route.path || '/' + (route.name || '');
 })

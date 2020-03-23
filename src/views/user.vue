@@ -75,18 +75,17 @@
         </div>
       </div>
     </div>
-    
     <van-action-sheet v-model="show" :actions="actions" :close-on-click-action="true" @select="onSelect" cancel-text="取消"/>
   </inside-page>
 </template>
 
 <script>
-import { ActionSheet } from 'vant';
+import { ActionSheet } from 'vant'
 export default {
   components: {
     [ActionSheet.name]: ActionSheet
   },
-  data() {
+  data () {
     return {
       show: false,
       countryCode: '+86',
@@ -134,7 +133,6 @@ export default {
     },
     // 获取验证码
     codeVerifyFunc () {
-      console.log("获取验证码")
       this.codeVerifyStatus()
     },
     codeVerifyStatus () {
