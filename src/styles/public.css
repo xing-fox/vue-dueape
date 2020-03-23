@@ -44,10 +44,25 @@ textarea::-webkit-input-placeholder {
   line-height: 50px;
   color: #61381F;
   text-align: center;
-  background: linear-gradient(-90deg, #EAD0AE 0%, #E8BB7B 100%);
+  background: linear-gradient(-90deg, #E8BB7B 0%, #EAD0AE 100%);
   border-radius: 4px;
 }
 
+.no-data {
+  padding-top: 90px;
+  text-align: center;
+  font-size: 14px;
+  color:#666666;
+}
+
+.no-data img {
+  width: 290px;
+}
+
+.no-data .public-button {
+  width: 70%;
+  margin: 20px auto 0;
+}
 
 /* 重置vant样式表 */
 

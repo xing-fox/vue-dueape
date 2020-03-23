@@ -32,7 +32,7 @@ export default {
         },
         {
           title: "我的课程",
-          path: "/home/payment",
+          path: "/home/my",
           icon: [
             require("../assets/icon-2.png"),
             require("../assets/icon-2-on.png")

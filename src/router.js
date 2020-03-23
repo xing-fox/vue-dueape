@@ -29,9 +29,9 @@ const routes = [
         title: '课程 - 首页'
       }
     }, {
-      path: 'payment',
-      name: 'payment',
-      component: () => import('./views/payment'),
+      path: 'my',
+      name: 'myCurriculum',
+      component: () => import('./views/myCurriculum'),
       meta: {
         title: '我的课程'
       }
@@ -56,6 +56,12 @@ const routes = [
     meta: {
       title: '搜索'
     },
+  }, {
+    name: 'payment',
+    component: () => import('./views/payment'),
+    meta: {
+      title: 'Due币充值'
+    }
   }
 ]
 

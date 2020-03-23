@@ -28,15 +28,6 @@
       color:#666666;
       padding: 20px;
     }
-    .no-data {
-      padding-top: 90px;
-      text-align: center;
-      font-size: 14px;
-      color:#666666;
-      img {
-        width: 290px;
-      }
-    }
   }
   .search-list {
     .title {
