@@ -184,7 +184,7 @@
       </div>
       <div class="content">
         <div class="login" @click="CHANGELOGIN(true)">
-          <div v-if="!userInfo">登录 \ 注册</div>
+          <div v-if="!userInfo == ''">登录 \ 注册</div>
           <div class="login-name" v-else>
             <span>{{ userInfo.user_login }}</span>
             <i class="arrow-right"></i>
@@ -196,7 +196,7 @@
       </div>
     </div>
     <div class="main">
-      <div class="un-login" v-if="!userInfo">
+      <div class="un-login" v-if="!userInfo == ''">
         <div class="title">
           <span>立即登录</span>
         </div>
@@ -271,6 +271,8 @@ export default {
       'CHANGELOGIN'
     ])
   },
-  mounted () {}
+  mounted () {
+    console.log(this.userInfo)
+  }
 }
 </script>
