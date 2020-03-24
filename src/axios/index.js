@@ -8,7 +8,6 @@ axios.defaults.baseURL = process.env.NODE_ENV === "production" ? '/' : '/'
 
 axios.interceptors.request.use(config => {
   const token = window.localStorage.getItem('token')
-  // const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2JpbGUiOiIxNzMwNTY1OTY2OCIsImlkIjoiNzYiLCJleHAiOjE1ODQxOTA0NTd9._2Trt-f1tM7hJoUqyOc85EAswuXOOZLdU43OhIHbzIM'
   if (token) config.headers.Authorization = token
   return config
 }, error => {

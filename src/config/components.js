@@ -1,4 +1,4 @@
-import InsidePage from '../components/insidePage'
+import InsidePage from '../components/inside-page'
 
 const Components = {
   install: function (Vue) {

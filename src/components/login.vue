@@ -6,29 +6,29 @@
         <span>报名前请完善您的个人意料</span>
       </div>
       <div class="main">
-        <div class="main-box van-hairline--bottom arrow">
+        <!-- <div class="main-box van-hairline--bottom arrow">
           <div class="name">学校</div>
-          <input readonly type="text" placeholder="请选择院校" @click="SchoolShow = true" />
-        </div>
-        <div class="main-box van-hairline--bottom">
+          <div class="school" @click="SchoolShow = true"></div>
+        </div> -->
+        <!-- <div class="main-box van-hairline--bottom">
           <div class="name">姓名</div>
           <input type="text" placeholder="请填写真实姓名" />
-        </div>
+        </div> -->
         <div class="main-box van-hairline--bottom">
           <div class="name" @click="AreaShow = true">
-            {{AreaCodeIndex}}
+            +{{AreaCodeIndex}}
             <i class="arrow"></i>
           </div>
-          <input type="text" placeholder="请输入手机号" />
+          <input v-model="Phone" type="text" placeholder="请输入手机号" />
         </div>
         <div class="main-box van-hairline--bottom">
           <div class="name">验证码</div>
-          <input type="text" placeholder="请输入验证码" />
-          <div class="get-code">
+          <input v-model="Code" type="text" placeholder="请输入验证码" />
+          <div class="get-code" :class="{active: ShowCode}" @click="GetCode">
             <span>获取验证码</span>
           </div>
         </div>
-        <div class="submit">
+        <div class="submit" :class="{active: ShowSubmit}" @click="Submit">
           <span>确定</span>
         </div>
       </div>
@@ -46,56 +46,51 @@
         </ul>
       </div>
     </van-popup>
-    <van-popup v-model="SchoolShow" position="bottom" :round="true">
-      <div class="box">
-        <div class="title van-hairline--bottom">请选择区号</div>
-        <ul>
-          <li
-            class="van-hairline--bottom"
-            v-for="(item, index) in AreaCode"
-            :key="index"
-            @click="ChoiseSchool(index)"
-          >{{ item.city }} {{ item.code }}</li>
-        </ul>
-      </div>
-    </van-popup>
   </div>
 </template>
 
 <script>
-import { Popup } from 'vant'
+import { Popup, Toast } from 'vant'
 import { mapMutations } from 'vuex'
-import { collegeIndex } from '@/axios/api'
+import { GetCode, PhoneLogin } from '@/axios/api'
 export default {
   name: "Login",
   data () {
     return {
       AreaShow: false,
-      AreaCodeIndex: "+86",
+      AreaCodeIndex: "86", // 区域
       AreaCode: [
         {
           city: "中国",
-          code: "+86"
+          code: "86"
         },
         {
           city: "美国",
-          code: "+1"
+          code: "1"
         },
         {
           city: "澳大利亚",
-          code: "+61"
+          code: "61"
         },
         {
           city: "英国",
-          code: "+44"
+          code: "44"
         },
         {
           city: "加拿大",
-          code: "+1"
+          code: "1"
         }
       ],
-      SchoolShow: false,
-      SchoolData: []
+      Code: '', // 验证码
+      Phone: '', // 手机号码
+    }
+  },
+  computed: {
+    ShowCode () {
+      return this.Phone !== ''
+    },
+    ShowSubmit () {
+      return this.phone !== '' && this.Code !== ''
     }
   },
   components: {
@@ -106,23 +101,50 @@ export default {
      * 登录
      */
     ...mapMutations([
-      'CHANGELOGIN'
+      'CHANGELOGIN',
+      'CHANGETOKEN',
+      'CHANGEUSERINFO'
     ]),
     /**
      * 选择区号
      */
     ChoiseArea (eq) {
       [this.AreaShow, this.AreaCodeIndex] = [false, this.AreaCode[eq].code]
-    }
+    },
     /**
-     * 选择学校
+     * 获取验证码
      */
-    // ChoiseSchool (eq) {},
-  },
-  mounted () {
-    collegeIndex({}).then(res => {
-      console.log(res)
-    })
+    GetCode () {
+      GetCode({
+        tel: this.Phone,
+        nation: this.AreaCodeIndex
+      }).then(res => {
+        if (res.code === 0) {
+          return Toast.success(res.data)
+        } else {
+          return Toast.fail('发送失败')
+        }
+      })
+    },
+    /**
+     * 提交登录信息
+     */
+    Submit () {
+      PhoneLogin({
+        smsCode:this.Code,
+        mobile: this.Phone,
+        areaCode: this.AreaCodeIndex
+      }).then(res => {
+        if (res.code === '0') {
+          this.CHANGELOGIN(false)
+          this.CHANGEUSERINFO(res.data)
+          this.CHANGETOKEN(res.data.token)
+          return Toast.fail('登录成功')
+        } else {
+          return Toast.fail('登录失败')
+        }
+      })
+    }
   }
 }
 </script>
@@ -198,6 +220,11 @@ export default {
             background-repeat: no-repeat;
           }
         }
+        .school {
+          flex: 1;
+          width: 0;
+          height: 44px;
+        }
         input {
           flex: 1;
           width: 0;
@@ -213,13 +240,22 @@ export default {
           font-size: 12px;
         }
         .get-code {
-          color: #cda34f;
+          color: rgba(211, 211, 211, 1);
           height: 44px;
+          cursor: not-allowed;
+          pointer-events: none;
+          &.active {
+            color: #cda34f;
+            cursor: pointer;
+            pointer-events: initial;
+          }
         }
       }
       .submit {
-        color: #5e3b20;
+        color: #fff;
         font-size: 18px;
+        cursor: not-allowed;
+        pointer-events: none;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -227,11 +263,17 @@ export default {
         height: 40px;
         margin: 35px auto;
         border-radius: 20px;
-        background: linear-gradient(
-          90deg,
-          rgba(241, 209, 157, 1),
-          rgba(232, 187, 120, 1)
-        );
+        background: rgba(211, 211, 211, 1);
+        &.active {
+          color: #5e3b20;
+          cursor: pointer;
+          pointer-events: initial;
+          background: linear-gradient(
+            90deg,
+            rgba(241, 209, 157, 1),
+            rgba(232, 187, 120, 1)
+          );
+        }
       }
     }
   }

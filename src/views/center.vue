@@ -3,7 +3,7 @@
     font-size: 0;
     line-height: 0;
     min-height: 100vh;
-    padding: 0 0 10px 0;
+    padding: 0 0 55px 0;
     box-sizing: border-box;
     background: #fafafa;
     .bg {
@@ -41,6 +41,19 @@
           color: #fff;
           font-size: 15px;
           line-height: 28px;
+          .login-name {
+            display: flex;
+            align-items: center;
+            .arrow-right {
+              display: inline-block;
+              width: 12px;
+              height: 12px;
+              margin: 0 0 0 5px;
+              background-image:url('../assets/center/right.png');
+              background-size: 100% 100%;
+              background-repeat: no-repeat;
+            }
+          }
         }
         .tutor {
           color: #835717;
@@ -92,6 +105,40 @@
         }
         .item {
           flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          img {
+            width: 30px;
+            height: 30px;
+          }
+          .item-right {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            margin: 0 0 0 8px;
+            .right-top {
+              color: #CDA34F;
+              font-size: 17px;
+              font-weight: bold;
+              line-height: 20px;
+            }
+            .right-bottom {
+              color: #666666;
+              font-size: 12px;
+              height: 20px;
+              display: flex;
+              align-items: center;
+              i {
+                display: inline-block;
+                width: 8px;
+                height: 8px;
+                background-image: url('../assets/center/right-1.png');
+                background-size: 100% 100%;
+                background-repeat: no-repeat;
+              }
+            }
+          }
         }
       }
     }
@@ -104,7 +151,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 25px 0;
+        padding: 28px 0;
         span {
           color: #666;
           font-size: 18px;
@@ -137,7 +184,11 @@
       </div>
       <div class="content">
         <div class="login" @click="CHANGELOGIN(true)">
-          <span>登录 \ 注册</span>
+          <div v-if="!userInfo">登录 \ 注册</div>
+          <div class="login-name" v-else>
+            <span>{{ userInfo.user_login }}</span>
+            <i class="arrow-right"></i>
+          </div>
         </div>
         <div class="tutor">
           <span>申请tutor</span>
@@ -145,7 +196,7 @@
       </div>
     </div>
     <div class="main">
-      <div class="un-login" v-if="false">
+      <div class="un-login" v-if="!userInfo">
         <div class="title">
           <span>立即登录</span>
         </div>
@@ -153,9 +204,27 @@
           <span>未来的日子在这里成就更好的自己</span>
         </div>  
       </div>
-      <div class="login">
-        <div class="item"></div>
-        <div class="item"></div>
+      <div class="login" v-else>
+        <div class="item">
+          <img src="../assets/center/due.png">
+          <div class="item-right">
+            <div class="right-top">{{ userInfo.money || 0 }}</div>
+            <div class="right-bottom">
+              <span>Due币</span>
+              <i></i>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <img src="../assets/center/coupon.png">
+          <div class="item-right">
+            <div class="right-top">{{ userInfo.couponNum || 0 }}</div>
+            <div class="right-bottom">
+              <span>优惠券</span>
+              <i></i>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="list">
@@ -169,7 +238,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
   name: 'Center',
   data () {
@@ -191,6 +260,9 @@ export default {
       ]
     }
   },
+  computed: mapState([
+    'userInfo'
+  ]),
   methods: {
     /**
      * 登录
@@ -198,6 +270,7 @@ export default {
     ...mapMutations([
       'CHANGELOGIN'
     ])
-  }
+  },
+  mounted () {}
 }
 </script>
