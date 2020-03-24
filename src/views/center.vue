@@ -184,19 +184,19 @@
       </div>
       <div class="content">
         <div class="login" @click="CHANGELOGIN(true)">
-          <div v-if="!userInfo == ''">登录 \ 注册</div>
+          <div v-if="JSON.stringify(userInfo) === '{}'">登录 \ 注册</div>
           <div class="login-name" v-else>
             <span>{{ userInfo.user_login }}</span>
             <i class="arrow-right"></i>
           </div>
         </div>
-        <div class="tutor">
+        <div class="tutor" @click="ChangeRoute('/applyTutor')">
           <span>申请tutor</span>
         </div>
       </div>
     </div>
     <div class="main">
-      <div class="un-login" v-if="!userInfo == ''">
+      <div class="un-login" @click="CHANGELOGIN(true)" v-if="JSON.stringify(userInfo) === '{}'">
         <div class="title">
           <span>立即登录</span>
         </div>
@@ -228,7 +228,7 @@
       </div>
     </div>
     <div class="list">
-      <div class="item" v-for="(item, index) in ListData" :key="index">
+      <div class="item" v-for="(item, index) in ListData" :key="index" @click="ListDataFunc(index)">
         <img :src="item.icon">
         <span>{{ item.name }}</span>
         <i></i>
@@ -269,7 +269,24 @@ export default {
      */
     ...mapMutations([
       'CHANGELOGIN'
-    ])
+    ]),
+    /**
+     * 跳转
+     */
+    ChangeRoute (router) {
+      this.$router.push({
+        path: router
+      })
+    },
+    /**
+     * list 操作
+     */
+    ListDataFunc (eq) {
+      if (JSON.stringify(this.userInfo) === '{}') {
+        this.CHANGELOGIN(true)
+        return Toast.fail('请先登录')
+      }
+    }
   },
   mounted () {
     console.log(this.userInfo)

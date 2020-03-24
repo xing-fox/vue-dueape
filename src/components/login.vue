@@ -1,6 +1,7 @@
 <template>
   <div class="wrapper">
     <img class="header" src="../assets/login.png" />
+    <div class="close" @click="CHANGELOGIN(false)"></div>
     <div class="content">
       <div class="title">
         <span>报名前请完善您的个人意料</span>
@@ -297,6 +298,16 @@ export default {
         }
       }
     }
+  }
+  .close {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-image: url('../assets/close.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
   }
 }
 </style>

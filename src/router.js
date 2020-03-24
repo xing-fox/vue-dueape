@@ -7,15 +7,19 @@ const routes = [
   {
     path: '*',
     redirect: '/home/curriculum'
-  },
-  {
+  }, {
     path: '/login',
     component: () => import('./views/login'),
     meta: {
       title: 'DueApe'
     }
-  },
-  {
+  }, {
+    path: '/applyTutor',
+    component: () => import('./views/apply-tutor'),
+    meta: {
+      title: '申请Tutor'
+    }
+  }, {
     name: 'home',
     component: () => import('./views/index'),
     meta: {
