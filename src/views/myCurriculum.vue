@@ -42,7 +42,8 @@
       transition: transform 0.3s ease-in-out;
     }
     .van-tab--active .van-tab__text {
-      transform: scale(1.2);
+      transform: scale(1.28);
+      background-color: #222;
       background-image: linear-gradient(
         -90deg,
         rgba(223, 181, 117, 1) 0%,

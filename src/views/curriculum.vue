@@ -41,7 +41,12 @@
     flex-direction: column;
     overflow: auto;
     background: #222222;
+    .van-tabs__wrap {
+      padding: 0 8px;
+    }
     .van-tab {
+      flex: none;
+      padding: 0 10px;
       line-height: 1rem;
       background: #222222;
     }
@@ -67,7 +72,7 @@
       transition: transform 0.3s ease-in-out;
     }
     .van-tab--active .van-tab__text {
-      transform: scale(1.15);
+      transform: scale(1.31);
       background-image: linear-gradient(
         -90deg,
         rgba(223, 181, 117, 1) 0%,
@@ -301,11 +306,12 @@
   <div class="curriculum">
     <div class="top-box">
       <div class="school" @click="show = true">
-        <span>{{ schoolName }}</span>
+        <span>{{ collegeData | schoolName }}</span>
       </div>
       <div class="search" @click="goSearch"></div>
     </div>
     <van-tabs
+      v-if="listStatue"
       v-model="active"
       animated
       swipeable
@@ -316,13 +322,13 @@
       <van-tab v-for="(item, index) in classList" :key="index" :title="item.navTitle">
         <!-- 精选 -->
         <div v-if="index === 0" class="home">
-          <van-swipe class="banner" :autoplay="3000" :show-indicators="false">
-            <van-swipe-item v-for="(image, index) in images" :key="'banner' + index">
-              <img :src="image" />
+          <van-swipe v-if="homeData.slideshows && homeData.slideshows.length" class="banner" :autoplay="3000" :show-indicators="false">
+            <van-swipe-item v-for="(image, index) in homeData.slideshows" :key="'banner' + index">
+              <img :src="image.imageUrl" />
             </van-swipe-item>
           </van-swipe>
 
-          <div class="advert">
+          <!--<div class="advert">
             <div class="item">
               <img src="../assets/icon1.png" />
               <div>
@@ -335,59 +341,47 @@
                 <p>选课咨询</p>为您量身定制课程
               </div>
             </div>
-          </div>
+          </div>-->
 
           <div class="class-list">
-            <div class="open-class">
+            <div class="open-class" v-if="homeData.pulicCourses && homeData.pulicCourses.length">
               <div class="title">公开课</div>
-              <div class="class-box">
+              <div class="class-box" v-for="(it, index) in homeData.pulicCourses" :key="'pulicCourses' + index">
                 <div class="code">
-                  <span>FIT9133</span>
+                  <span>{{ homeData.courseNo }}</span>
                 </div>
-                <div class="name">5大科目指数独家分析</div>
-                <div class="des">Python编程和算法的基础课程讲解</div>
-                <div class="des">11月22日18:00开课</div>
+                <div class="name">{{ homeData.courseTitle }}</div>
+                <div class="des">{{ homeData.recommendReason }}</div>
+                <div class="des">{{ homeData.coursePeriod }} | 每期{{ homeData.periodHour }}</div>
                 <div class="info">
                   <div class="user">
-                    <img src="../assets/icon2.png" />Tony
+                    <img :src="homeData.tutorPhotoUrl" />{{ homeData.tutorName }}
                   </div>
-                  <p>免费</p>
-                </div>
-              </div>
-              <div class="class-box">
-                <div class="code">
-                  <span>ECON1203</span>
-                </div>
-                <div class="name">考试技巧分享，免费领取独家资料，分享 学习心得，建立知识框架</div>
-                <div class="des">主讲人UNSW在读，均分Distinction</div>
-                <div class="des">查看精彩回放</div>
-                <div class="info">
-                  <div class="user">
-                    <img src="../assets/icon2.png" />Sunny
-                  </div>
-                  <p>199</p>
+                  <p>{{ homeData.currentPrice === 0 ? homeData.currentPriceStr : '免费' }}</p>
                 </div>
               </div>
               <div class="open-more">
                 <span>查看更多公开课</span>
               </div>
             </div>
-            <div class="title">好课推荐</div>
-            <div class="class-box" v-for="(it, inx) in item.listData" :key="'list' + index + inx">
-              <div class="name">
-                <i class="hot" v-if="it.type === 1"></i>
-                <i class="offline" v-if="it.type === 2"></i>
-                {{ it.title }}
+            <template v-if="homeData.selectionCourses && homeData.selectionCourses.length">
+              <div class="title">好课推荐</div>
+              <div class="class-box" v-for="(it, inx) in item.listData" :key="'list' + index + inx">
+                <div class="name">
+                  <i class="hot" v-if="it.type === 1"></i>
+                  <i class="offline" v-if="it.type === 2"></i>
+                  {{ it.title }}
+                </div>
+                <div class="des">{{ it.time }}</div>
+                <div class="info">
+                  <span>{{ it.num }}人报名</span>
+                  <p class="price">
+                    <span>{{ it.originalPrice }}</span>
+                    {{ it.price }}
+                  </p>
+                </div>
               </div>
-              <div class="des">{{ it.time }}</div>
-              <div class="info">
-                <span>{{ it.num }}人报名</span>
-                <p class="price">
-                  <span>{{ it.originalPrice }}</span>
-                  {{ it.price }}
-                </p>
-              </div>
-            </div>
+            </template>
           </div>
         </div>
 
@@ -419,10 +413,10 @@
         </div>
         <ul>
           <li
-            v-for="(item, index) in schoolList"
+            v-for="(item, index) in collegeList"
             :key="'school' + index"
             @click="selectSchool(item)"
-          >{{ item }}</li>
+          >{{ item | schoolName }}</li>
         </ul>
       </div>
     </van-popup>
@@ -430,130 +424,188 @@
 </template>
 
 <script>
-import { Tab, Tabs, Swipe, SwipeItem, Popup } from 'vant'
+import { Tab, Tabs, Swipe, SwipeItem, Popup, PullRefresh } from 'vant'
+import { collegeIndex, topicIndex, slideShowIndex, homeIndex, courseIndex } from '@/axios/api'
 export default {
   components: {
     [Tab.name]: Tab,
     [Tabs.name]: Tabs,
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem,
-    [Popup.name]: Popup
+    [Popup.name]: Popup,
+    [PullRefresh.name]: PullRefresh
   },
   data() {
     return {
       active: 0,
-      show: false,
+      collegeData: { // 学校信息
+        collegeCode: "",
+        collegeId: null,
+        collegeName: "",
+        countryId: null
+      },
+      collegeList: [], // 学校列表
+      show: false, // 学校选择弹框显示状态
+      listStatue: false, // 列表显示状态
       classList: [
-        {
-          navTitle: "精选",
-          listData: [
-            {
-              type: 0,
-              title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
-              time: "10月12日 15:30",
-              num: 21,
-              price: "100",
-              originalPrice: "140"
-            }
-          ]
-        },
-        {
-          navTitle: "作业班",
-          listData: [
-            {
-              type: 1,
-              title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
-              time: "10月12日 15:30",
-              num: 21,
-              price: "100",
-              originalPrice: "140"
-            },
-            {
-              type: 2,
-              title: "MATH1081- 期末火箭班，教你拿高分的 秘诀",
-              time: "11月5日 13:00",
-              num: 3,
-              price: "100",
-              originalPrice: "140"
-            }
-          ]
-        },
-        {
-          navTitle: "期中班",
-          listData: [
-            {
-              type: 0,
-              title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
-              time: "10月12日 15:30",
-              num: 21,
-              price: "100",
-              originalPrice: "140"
-            }
-          ]
-        },
-        {
-          navTitle: "期末班",
-          listData: [
-            {
-              type: 2,
-              title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
-              time: "10月12日 15:30",
-              num: 21,
-              price: "100",
-              originalPrice: "140"
-            }
-          ]
-        },
-        {
-          navTitle: "每周小课堂",
-          listData: [
-            {
-              type: 1,
-              title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
-              time: "10月12日 15:30",
-              num: 21,
-              price: "100",
-              originalPrice: "140"
-            }
-          ]
-        }
+        // {
+        //   navTitle: "精选",
+        //   listData: [
+        //     {
+        //       type: 0,
+        //       title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
+        //       time: "10月12日 15:30",
+        //       num: 21,
+        //       price: "100",
+        //       originalPrice: "140"
+        //     }
+        //   ]
+        // },
+        // {
+        //   navTitle: "作业班",
+        //   listData: [
+        //     {
+        //       type: 1,
+        //       title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
+        //       time: "10月12日 15:30",
+        //       num: 21,
+        //       price: "100",
+        //       originalPrice: "140"
+        //     },
+        //     {
+        //       type: 2,
+        //       title: "MATH1081- 期末火箭班，教你拿高分的 秘诀",
+        //       time: "11月5日 13:00",
+        //       num: 3,
+        //       price: "100",
+        //       originalPrice: "140"
+        //     }
+        //   ]
+        // },
+        // {
+        //   navTitle: "期中班",
+        //   listData: [
+        //     {
+        //       type: 0,
+        //       title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
+        //       time: "10月12日 15:30",
+        //       num: 21,
+        //       price: "100",
+        //       originalPrice: "140"
+        //     }
+        //   ]
+        // },
+        // {
+        //   navTitle: "期末班",
+        //   listData: [
+        //     {
+        //       type: 2,
+        //       title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
+        //       time: "10月12日 15:30",
+        //       num: 21,
+        //       price: "100",
+        //       originalPrice: "140"
+        //     }
+        //   ]
+        // },
+        // {
+        //   navTitle: "每周小课堂",
+        //   listData: [
+        //     {
+        //       type: 1,
+        //       title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
+        //       time: "10月12日 15:30",
+        //       num: 21,
+        //       price: "100",
+        //       originalPrice: "140"
+        //     }
+        //   ]
+        // }
       ],
+      homeData: {},
       images: [
         require("../assets/banner/1.jpg"),
         require("../assets/banner/2.jpg"),
         require("../assets/banner/3.jpg"),
         require("../assets/banner/4.jpg")
-      ],
-      schoolName: "加州大学圣地亚哥分校（UCSD）",
-      schoolList: [
-        "宾夕法尼亚州立大学（PSU）",
-        "波士顿大学（BU）",
-        "宾夕法尼亚州立大学（PSU）",
-        "波士顿大学圣塔巴巴拉分校（UCSB）",
-        "宾夕法尼亚州立大学（PSU）",
-        "加州大学圣地亚哥分校（UCSD）",
-        "波士顿大学（BU）",
-        "宾夕法尼亚州立大学（PSU）",
-        "波士顿大学圣塔巴巴拉分校（UCSB）",
-        "宾夕法尼亚州立大学（PSU）",
-        "加州大学圣地亚哥分校（UCSD）",
-        "波士顿大学（BU）",
-        "宾夕法尼亚州立大学（PSU）",
-        "波士顿大学圣塔巴巴拉分校（UCSB）",
-        "宾夕法尼亚州立大学（PSU）",
-        "加州大学圣地亚哥分校（UCSD）"
       ]
-    };
+    }
+  },
+  filters:{
+    schoolName (val) {
+      return val.collegeCode ? val.collegeName + "(" + val.collegeCode + ")" : val.collegeName
+    },
   },
   methods: {
-    selectSchool(name) {
-      this.schoolName = name;
-      this.show = false;
-    },
+    // 去搜索
     goSearch() {
       this.$router.push({
         path: "/search"
-      });
+      })
+    },
+    // 获取学校列表
+    getCollegeFn () {
+      collegeIndex({order: "desc"}).then(res => {
+        if (res.code === '0') {
+          this.collegeList = res.data.rowList
+        }
+      })
+    },
+    // 选择学校
+    selectSchool(item) {
+      if (item.collegeId !== this.collegeData.collegeId) {
+        this.collegeData = item
+        localStorage.setItem('collegeData', JSON.stringify(item))
+        this.listStatue = false
+        this.updateIndex()
+      } else {
+        this.show = false
+      }
+    },
+    // 切换学校更新数据
+    updateIndex () {
+      this.getTopicIndexFn()
+    },
+    // 获取频道Tab
+    getTopicIndexFn () {
+      topicIndex({collegeId: this.collegeData.collegeId}).then(res => {
+        if (res.code === '0') {
+          this.show = false
+          this.classList = []
+          res.data.map(item => {
+            this.classList.push({navTitle: item.topicName, listData: []})
+          })
+          this.getHomeIndexFn()
+        }
+      })
+    },
+    // 获取首页数据
+    getHomeIndexFn () {
+      homeIndex({collegeId: this.collegeData.collegeId}).then(res => {
+        if (res.code === '0') {
+          this.listStatue = true
+          this.homeData = res.data
+        }
+      })
+    },
+    // 获取课程列表
+    getCourseIndexFn () {
+      courseIndex({collegeId: this.collegeData.collegeId}).then(res => {
+        if (res.code === '0') {
+          res.data.map((item, index) => {
+            this.classList[index].navTitle = item.topicName
+          })
+        }
+      })
+    },
+  },
+  mounted () {
+    this.getCollegeFn()
+    if (!localStorage.getItem('collegeData')) {
+      this.show = true
+    } else {
+      this.collegeData = JSON.parse(localStorage.getItem('collegeData'))
+      this.updateIndex()
     }
   }
 };

@@ -10,6 +10,48 @@ export const collegeIndex = (param) => {
 }
 
 /**
+ * @param 查询topic列表（频道tab）  
+ */
+export const topicIndex = (param) => {
+  return Post('api/topic/index', param)
+}
+
+/**
+ * @param 首页查询所有课程：一对一辅导，公开课，好课推荐，全部课程
+ */
+export const homeIndex = (param) => {
+  return Post('api/home/index', param)
+}
+
+/**
+ * @param 查询轮播图列表  
+ */
+export const slideShowIndex = (param) => {
+  return Post('api/slideshow/index', param)
+}
+
+/**
+ * @param 查询课程信息列表(分页)  
+ */
+export const courseIndex = (param) => {
+  return Post('api/course/index', param)
+}
+
+/**
+ * @param 根据课号模糊匹配班课信息  
+ */
+export const courseSearch = (param) => {
+  return Post('api/course/search', param)
+}
+
+/**
+ * @param 查询我的订单  
+ */
+export const coursecustomerOrder = (param) => {
+  return Post('api/course/customerOrder', param)
+}
+
+/**
  * @param 查询课程详情页
  */
 export const courseDetail = (param) => {
