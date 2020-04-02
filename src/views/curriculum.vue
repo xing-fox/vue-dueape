@@ -88,6 +88,10 @@
       .van-tab__pane {
         height: 100%;
         overflow-y: auto;
+        .van-pull-refresh, .van-pull-refresh__track, .home, .class-list{
+          height: 100%;
+          // overflow-y: auto;
+        }
       }
     }
   }
@@ -315,94 +319,131 @@
       v-model="active"
       animated
       swipeable
+      scrollspy
       :border="false"
       title-active-color="#DFB575"
       title-inactive-color="#666666"
+      @change="onChangefn"
     >
       <van-tab v-for="(item, index) in classList" :key="index" :title="item.navTitle">
-        <!-- 精选 -->
-        <div v-if="index === 0" class="home">
-          <van-swipe v-if="homeData.slideshows && homeData.slideshows.length" class="banner" :autoplay="3000" :show-indicators="false">
-            <van-swipe-item v-for="(image, index) in homeData.slideshows" :key="'banner' + index">
-              <img :src="image.imageUrl" />
-            </van-swipe-item>
-          </van-swipe>
+        <van-pull-refresh v-model="item.isRefresh" @refresh="onRefresh(index)">
+          <!-- 精选 -->
+          <div v-if="index === 0" class="home">
+            <van-swipe v-if="homeData.slideshows && homeData.slideshows.length" class="banner" :autoplay="3000" :show-indicators="false">
+              <van-swipe-item v-for="(image, index) in homeData.slideshows" :key="'banner' + index">
+                <img :src="image.imageUrl" />
+              </van-swipe-item>
+            </van-swipe>
 
-          <!--<div class="advert">
-            <div class="item">
-              <img src="../assets/icon1.png" />
-              <div>
-                <p>了解DueApe</p>给您VIP式的服务
-              </div>
-            </div>
-            <div class="item">
-              <img src="../assets/icon4.png" />
-              <div>
-                <p>选课咨询</p>为您量身定制课程
-              </div>
-            </div>
-          </div>-->
-
-          <div class="class-list">
-            <div class="open-class" v-if="homeData.pulicCourses && homeData.pulicCourses.length">
-              <div class="title">公开课</div>
-              <div class="class-box" v-for="(it, index) in homeData.pulicCourses" :key="'pulicCourses' + index">
-                <div class="code">
-                  <span>{{ homeData.courseNo }}</span>
+            <div class="advert">
+              <div class="item">
+                <img src="../assets/icon1.png" />
+                <div>
+                  <p>了解DueApe</p>给您VIP式的服务
                 </div>
-                <div class="name">{{ homeData.courseTitle }}</div>
-                <div class="des">{{ homeData.recommendReason }}</div>
-                <div class="des">{{ homeData.coursePeriod }} | 每期{{ homeData.periodHour }}</div>
-                <div class="info">
-                  <div class="user">
-                    <img :src="homeData.tutorPhotoUrl" />{{ homeData.tutorName }}
+              </div>
+              <div class="item">
+                <img src="../assets/icon4.png" />
+                <div>
+                  <p>选课咨询</p>为您量身定制课程
+                </div>
+              </div>
+            </div>
+
+            <div class="class-list">
+              <div class="open-class" v-if="homeData.pulicCourses && homeData.pulicCourses.length">
+                <div class="title">公开课</div>
+                <div class="class-box" v-for="(it, inx) in homeData.pulicCourses" :key="'pulicCourses' + inx">
+                  <div class="code">
+                    <span>{{ it.courseNo }}</span>
                   </div>
-                  <p>{{ homeData.currentPrice === 0 ? homeData.currentPriceStr : '免费' }}</p>
+                  <div class="name">{{ it.courseTitle }}</div>
+                  <div class="des">{{ it.recommendReason }}</div>
+                  <div class="des">{{ it | timeFilter }}</div>
+                  <div class="info">
+                    <div class="user">
+                      <img :src="it.tutorPhotoUrl" />{{ it.tutorName }}
+                    </div>
+                    <p>{{ it.currentPrice !== 0 ? it.currentPriceStr : '免费' }}</p>
+                  </div>
+                </div>
+                <div class="open-more">
+                  <span>查看更多公开课</span>
                 </div>
               </div>
-              <div class="open-more">
-                <span>查看更多公开课</span>
-              </div>
+
+              <template v-if="homeData.selectionCourses && homeData.selectionCourses.length">
+                <div class="title">好课推荐</div>
+                <div class="class-box" v-for="(it, inx) in homeData.selectionCourses" :key="'selectionCourses' + inx">
+                  <div class="name">
+                    <!-- 火爆 -->
+                    <i class="hot" v-if="it.hotFlag === 1"></i>
+                    <!-- 线下课图标 -->
+                    <i class="offline" v-if="it.offlineFlag === 1"></i>
+                    {{ it.courseTitle }}
+                  </div>
+                  <div class="des">{{ it | timeFilter }}</div>
+                  <div class="info">
+                    <span>{{ it.applyNum }}人报名</span>
+                    <p class="price">
+                      <span>{{ it.originalPriceStr }}</span>
+                      {{ it.currentPrice !== 0 ? it.currentPriceStr : '免费' }}
+                    </p>
+                  </div>
+                </div>
+              </template>
+
+              <template v-if="homeData.wholeCourses && homeData.wholeCourses.length">
+                <div class="title">全部课程</div>
+                <div class="class-box" v-for="(it, inx) in homeData.wholeCourses" :key="'selectionCourses' + inx">
+                  <div class="name">
+                    <!-- 火爆 -->
+                    <i class="hot" v-if="it.hotFlag === 1"></i>
+                    <!-- 线下课图标 -->
+                    <i class="offline" v-if="it.offlineFlag === 1"></i>
+                    {{ it.courseTitle }}
+                  </div>
+                  <div class="des">{{ it | timeFilter }}</div>
+                  <div class="info">
+                    <span>{{ it.applyNum }}人报名</span>
+                    <p class="price">
+                      <span>{{ it.originalPriceStr }}</span>
+                      {{ it.currentPrice !== 0 ? it.currentPriceStr : '免费' }}
+                    </p>
+                  </div>
+                </div>
+              </template>
             </div>
-            <template v-if="homeData.selectionCourses && homeData.selectionCourses.length">
-              <div class="title">好课推荐</div>
+          </div>
+
+          <!-- 作业班 期中班 期末班 每周小课堂 -->
+          <div v-else class="class-list">
+            <van-list
+              v-model="item.finishedStatue"
+              :finished="item.finished"
+              finished-text=""
+              @load="onLoadFn(index)"
+            >
               <div class="class-box" v-for="(it, inx) in item.listData" :key="'list' + index + inx">
                 <div class="name">
-                  <i class="hot" v-if="it.type === 1"></i>
-                  <i class="offline" v-if="it.type === 2"></i>
-                  {{ it.title }}
+                  <!-- 火爆 -->
+                  <i class="hot" v-if="it.hotFlag === 1"></i>
+                  <!-- 线下课图标 -->
+                  <i class="offline" v-if="it.offlineFlag === 1"></i>
+                  {{ it.courseTitle }}
                 </div>
-                <div class="des">{{ it.time }}</div>
+                <div class="des">{{ it | timeFilter }}</div>
                 <div class="info">
-                  <span>{{ it.num }}人报名</span>
+                  <span>{{ it.applyNum }}人报名</span>
                   <p class="price">
-                    <span>{{ it.originalPrice }}</span>
-                    {{ it.price }}
+                    <span>{{ it.originalPriceStr }}</span>
+                    {{ it.currentPrice !== 0 ? it.currentPriceStr : '免费' }}
                   </p>
                 </div>
               </div>
-            </template>
-          </div>
+            </van-list>
         </div>
-
-        <!-- 作业班 期中班 期末班 每周小课堂 -->
-        <div v-else class="class-list">
-          <div class="class-box" v-for="(it, inx) in item.listData" :key="'list' + index + inx">
-            <div class="name">
-              <i class="hot" v-if="it.type === 1"></i>
-              <i class="offline" v-if="it.type === 2"></i>
-              {{ it.title }}
-            </div>
-            <div class="des">{{ it.time }}</div>
-            <div class="info">
-              <span>{{ it.num }}人报名</span>
-              <p class="price">
-                <span>{{ it.originalPrice }}</span>
-                {{ it.price }}
-              </p>
-            </div>
-          </div>
-        </div>
+        </van-pull-refresh>
       </van-tab>
     </van-tabs>
     <van-popup v-model="show" position="bottom" :style="{ height: '100%' }" :round="true">
@@ -424,7 +465,7 @@
 </template>
 
 <script>
-import { Tab, Tabs, Swipe, SwipeItem, Popup, PullRefresh } from 'vant'
+import { Tab, Tabs, Swipe, SwipeItem, Popup, PullRefresh, List } from 'vant'
 import { collegeIndex, topicIndex, slideShowIndex, homeIndex, courseIndex } from '@/axios/api'
 export default {
   components: {
@@ -433,7 +474,8 @@ export default {
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem,
     [Popup.name]: Popup,
-    [PullRefresh.name]: PullRefresh
+    [PullRefresh.name]: PullRefresh,
+    [List.name]: List
   },
   data() {
     return {
@@ -446,101 +488,28 @@ export default {
       },
       collegeList: [], // 学校列表
       show: false, // 学校选择弹框显示状态
-      listStatue: false, // 列表显示状态
-      classList: [
-        // {
-        //   navTitle: "精选",
-        //   listData: [
-        //     {
-        //       type: 0,
-        //       title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
-        //       time: "10月12日 15:30",
-        //       num: 21,
-        //       price: "100",
-        //       originalPrice: "140"
-        //     }
-        //   ]
-        // },
-        // {
-        //   navTitle: "作业班",
-        //   listData: [
-        //     {
-        //       type: 1,
-        //       title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
-        //       time: "10月12日 15:30",
-        //       num: 21,
-        //       price: "100",
-        //       originalPrice: "140"
-        //     },
-        //     {
-        //       type: 2,
-        //       title: "MATH1081- 期末火箭班，教你拿高分的 秘诀",
-        //       time: "11月5日 13:00",
-        //       num: 3,
-        //       price: "100",
-        //       originalPrice: "140"
-        //     }
-        //   ]
-        // },
-        // {
-        //   navTitle: "期中班",
-        //   listData: [
-        //     {
-        //       type: 0,
-        //       title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
-        //       time: "10月12日 15:30",
-        //       num: 21,
-        //       price: "100",
-        //       originalPrice: "140"
-        //     }
-        //   ]
-        // },
-        // {
-        //   navTitle: "期末班",
-        //   listData: [
-        //     {
-        //       type: 2,
-        //       title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
-        //       time: "10月12日 15:30",
-        //       num: 21,
-        //       price: "100",
-        //       originalPrice: "140"
-        //     }
-        //   ]
-        // },
-        // {
-        //   navTitle: "每周小课堂",
-        //   listData: [
-        //     {
-        //       type: 1,
-        //       title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
-        //       time: "10月12日 15:30",
-        //       num: 21,
-        //       price: "100",
-        //       originalPrice: "140"
-        //     }
-        //   ]
-        // }
-      ],
+      listStatue: false, // 学校列表显示状态
+      pageSize: 10,
+      classList: [],
       homeData: {},
-      images: [
-        require("../assets/banner/1.jpg"),
-        require("../assets/banner/2.jpg"),
-        require("../assets/banner/3.jpg"),
-        require("../assets/banner/4.jpg")
-      ]
     }
   },
   filters:{
     schoolName (val) {
       return val.collegeCode ? val.collegeName + "(" + val.collegeCode + ")" : val.collegeName
     },
+    timeFilter (val) {
+      return val.packageFlag === "1" ? val.coursePeriod + " | 每期" + val.periodHour + "h" : val.courseTime
+    }
   },
   methods: {
     // 去搜索
     goSearch() {
       this.$router.push({
-        path: "/search"
+        path: "/search",
+        query: {
+          collegeId: this.collegeData.collegeId
+        }
       })
     },
     // 获取学校列表
@@ -573,7 +542,15 @@ export default {
           this.show = false
           this.classList = []
           res.data.map(item => {
-            this.classList.push({navTitle: item.topicName, listData: []})
+            this.classList.push({
+              navTitle: item.topicName,
+              courseType: item.courseType,
+              pageNum: 1,
+              isRefresh: false,
+              finishedStatue: false,
+              finished: false,
+              listData: []
+            })
           })
           this.getHomeIndexFn()
         }
@@ -585,19 +562,46 @@ export default {
         if (res.code === '0') {
           this.listStatue = true
           this.homeData = res.data
+          this.classList[0].isRefresh = false
         }
       })
     },
     // 获取课程列表
-    getCourseIndexFn () {
-      courseIndex({collegeId: this.collegeData.collegeId}).then(res => {
+    getCourseIndexFn (index, courseType, pageN) {
+      courseIndex({
+        collegeId: this.collegeData.collegeId,
+        courseType: courseType,
+        pageNum: pageN,
+        pageSize: this.pageSize
+      }).then(res => {
         if (res.code === '0') {
-          res.data.map((item, index) => {
-            this.classList[index].navTitle = item.topicName
-          })
+          this.classList[index].listData = res.data.rowList
+          this.classList[index].isRefresh = false
+          this.classList[index].finishedStatue = false
+          if (res.data.pages === 0) this.classList[index].finished = true
         }
       })
     },
+    // 下拉刷新 index索引
+    onRefresh (index) {
+      if (index === 0) {
+        this.getHomeIndexFn()
+      } else {
+        this.getCourseIndexFn(index, this.classList[index].courseType, 0)
+      }
+    },
+    // 导航切换
+    onChangefn (item) {
+      let listD = this.classList[item]
+      if (listD.listData && !listD.listData.length) {
+        this.getCourseIndexFn(item, listD.courseType, 0)
+      }
+    },
+    // 翻页加载
+    onLoadFn (index) {
+      let listD = this.classList[index]
+      this.getCourseIndexFn(index, listD.courseType, listD.pageNum++)
+    }
   },
   mounted () {
     this.getCollegeFn()

@@ -101,27 +101,36 @@
       shape="round" 
       placeholder="请输入课程编号" 
       show-action 
-      @search="onSearch" 
+      @search="getCourseSearchFn" 
       @cancel="onCancel" 
       :left-icon="searchIcon"/>
     <div class="search-box">
       <div v-show="!value && historyList.length" class="history-list">
         <div class="title">历史搜索</div>
-        <div class="history-item" v-for="(item, index) in historyList" :key="'history' + index">{{ item }}</div>
-        <div class="clear-btn">清除搜索历史</div>
+        <div class="history-item" v-for="(item, index) in historyList" :key="'history' + index" @click="historySearchFn(item)">{{ item }}</div>
+        <div class="clear-btn" @click="clearFn">清除搜索历史</div>
       </div>
       <div v-show="value && searchList.length" class="search-list">
         <div class="title">相关课程</div>
         <div class="class-box" v-for="(item, index) in searchList" :key="'list' + index">
-          <div class="name"><i class="hot" v-if="item.type === 1"></i><i class="offline" v-if="item.type === 2"></i>{{ item.title }}</div>
-          <div class="des">{{ item.time }}</div>
+          <div class="name">
+            <!-- 火爆 -->
+            <i class="hot" v-if="item.hotFlag === 1"></i>
+            <!-- 线下课图标 -->
+            <i class="offline" v-if="item.offlineFlag === 1"></i>
+            {{ item.courseTitle }}
+          </div>
+          <div class="des">{{ item | timeFilter }}</div>
           <div class="info">
-            <span>{{ item.num }}人报名</span>
-            <p class="price">{{ item.price }}</p>
+            <span>{{ item.applyNum }}人报名</span>
+            <p class="price">
+              <span>{{ item.originalPriceStr }}</span>
+              {{ item.currentPrice !== 0 ? item.currentPriceStr : '免费' }}
+            </p>
           </div>
         </div>
       </div>
-      <div v-show="value && !searchList.length" class="no-data">
+      <div v-show="value && !searchList.length && statue" class="no-data">
         <img src="../assets/null.png">
         <p>抱歉，没有相关课程</p>
       </div>
@@ -131,6 +140,7 @@
 
 <script>
 import { Search } from 'vant'
+import { courseSearch } from '@/axios/api'
 export default {
   components: {
     [Search.name]: Search
@@ -138,30 +148,49 @@ export default {
   data() {
     return {
       searchIcon: require('../assets/icon-search.png'),
+      collegeId: this.$route.query.collegeId,
       value: '',
-      historyList: [
-        "111",
-        "2222"
-      ],
-      searchList: [{
-        type: 1,
-        title: "AI算法大牛解密无人车技术-卷积神经网 络与深度强化学习",
-        time: "10月12日 15:30",
-        num: 21,
-        price: "100"
-      }, {
-        type: 2,
-        title: "MATH1081- 期末火箭班，教你拿高分的 秘诀",
-        time: "11月5日 13:00",
-        num: 3,
-        price: "100"
-      }]
+      historyList: [],
+      searchList: [],
+      statue: false
+    }
+  },
+  filters:{
+    timeFilter (val) {
+      return val.packageFlag === "1" ? val.coursePeriod + " | 每期" + val.periodHour + "h" : val.courseTime
     }
   },
   methods: {
-    onSearch () {},
+    // 获取课程列表
+    getCourseSearchFn () {
+      this.historyList.unshift(this.value)
+      localStorage.setItem('searchHistory', JSON.stringify(this.historyList))
+      courseSearch({
+        collegeId: this.collegeId,
+        courseNo: this.value
+      }).then(res => {
+        this.statue = true
+        if (res.code === '0') {
+          this.searchList = res.data
+        }
+      })
+    },
+    // 清空历史记录
+    clearFn () {
+      this.historyList = []
+      localStorage.removeItem('searchHistory')
+    },
+    historySearchFn (item) {
+      this.value = item
+      this.getCourseSearchFn()
+    },
     onCancel () {
       this.$router.go(-1)
+    }
+  },
+  mounted () {
+    if (localStorage.getItem('searchHistory')) {
+      this.historyList = JSON.parse(localStorage.getItem('searchHistory'))
     }
   }
 }
